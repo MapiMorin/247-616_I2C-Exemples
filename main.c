@@ -5,8 +5,12 @@
 #include <linux/i2c-dev.h> //for IOCTL defs
 #include <fcntl.h>
 
-#define I2C_FICHIER "/dev/i2c-2" // fichier Linux representant le BUS #2
-#define I2C_ADRESSE 0x68 // adresse du Device I2C MPU-9250 (motion tracking)
+//#define I2C_FICHIER "/dev/i2c-2" // fichier Linux representant le BUS #2
+//#define I2C_ADRESSE 0x68 // adresse du Device I2C MPU-9250 (motion tracking)
+
+
+#define I2C_FICHIER "/dev/i2c-1" // fichier Linux representant le BUS #1
+#define I2C_ADRESSE 0x29 // adresse du VL6180/satel
 
 int main()
 {
@@ -27,10 +31,13 @@ int main()
 	}
 	
 	// Écriture et Lecture sur le port I2C
-	uint8_t Source = 0x75; // registre d'ID du chip I2C
+	//uint8_t Source = 0x75; // registre d'ID du chip I2C
+	uint8_t Source[2] = {0x00, 0x00};
 	uint8_t Destination;
 	uint8_t NombreDOctetsALire = 1;
-	uint8_t NombreDOctetsAEcrire = 1;
+	uint8_t NombreDOctetsAEcrire = 2;
+
+
 
 
 	if(write(fdPortI2C, &Source, NombreDOctetsAEcrire) != NombreDOctetsAEcrire)
@@ -39,6 +46,7 @@ int main()
 		close(fdPortI2C);
 		return -1;
 	}
+
 	if (read(fdPortI2C, &Destination, NombreDOctetsALire) != NombreDOctetsALire)
 	{
 		printf("erreur: Lecture I2C\n");
@@ -50,3 +58,5 @@ int main()
 	close(fdPortI2C); /// Fermeture du 'file descriptor'
 	return 0;
 }
+
+
